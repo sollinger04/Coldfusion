@@ -1,0 +1,19 @@
+<form method="post">
+Datasource:<input type="text" name="tempdsn" value="<cfoutput>#application.datasource#</cfoutput>"><br>
+Table Name:<input type="text" name="tablename" value=""><br>
+Object Name:<input type="text" name="objectname" value=""><br>
+<input type="submit">
+</form>
+
+<cfif isdefined('form.tablename') AND isdefined('form.tempdsn')>
+	<cfquery name="temp" datasource="#form.tempdsn#" >
+		SELECT * FROM information_schema.columns
+		WHERE table_name = '#form.tablename#'
+		ORDER BY ordinal_position
+	</cfquery>
+
+	<cfoutput query="temp" >
+		<cfset mystring = "#form.objectname#.set#column_name#(form.#column_name#);">
+		<!---#replace(replace(replace(mystring,'[','<'),']','>'),'$','##')#--->#mystring#<br />
+	</cfoutput>
+</cfif>
