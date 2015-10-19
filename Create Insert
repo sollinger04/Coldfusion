@@ -1,0 +1,26 @@
+<form method="post">
+Datasource:<input type="text" name="tempdsn" value="<cfoutput>#request.dsn#</cfoutput>"><br>
+Table Name:<input type="text" name="tablename" value=""><br>
+Variable:<input type="text" name="variable" value=""><br>
+<input type="submit">
+</form>
+
+<cfif isdefined('form.tablename') AND isdefined('form.tempdsn')>
+	<cfquery name="temp" datasource="#form.tempdsn#" >
+		SELECT * FROM information_schema.columns
+		WHERE table_name = '#form.tablename#'
+		ORDER BY ordinal_position		
+	</cfquery>
+		INSERT INTO <cfoutput>#form.tablename#</cfoutput><br>
+			(<br>			
+	<cfoutput query="temp">
+			#column_name#<cfif currentrow neq recordcount>,</cfif><br>
+	</cfoutput>
+			)<br>
+		VALUES<br>
+			(<br>
+	<cfoutput query="temp">
+	<cfif data_type eq 'varchar' or data_type eq 'text'>'</cfif>###variable#.#column_name###<cfif data_type eq 'varchar' or data_type eq 'text'>'</cfif><cfif currentrow neq recordcount>,</cfif><br>
+	</cfoutput>			
+			)<br>
+</cfif>
